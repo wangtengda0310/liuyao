@@ -39,10 +39,10 @@
 (defun 纳甲地支取五行 (干支)
   (assoc (substring 干支 1) 地支五行))
 
-(defvar 八挂
+(defvar 八卦
   `(
-    ("乾" . ,(make-list 3 少阳))
-    ("坤" . ,(make-list 3 少阴))
+    ("乾" . ,(make-list 3 '少阳))
+    ("坤" . ,(make-list 3 '少阴))
     ("艮" . (阴爻 阴爻 阳爻))
     ("兑" . (阳爻 阳爻 阴爻))
     ("坎" . (阴爻 阳爻 阴爻))
@@ -51,11 +51,10 @@
     ("巽" . (阴爻 阳爻 阳爻))
     ))
 
-
-(defvar 八纯挂
+(defvar 八纯卦
   `(
-    ("乾" . ,(make-list 6 少阳))
-    ("坤" . ,(make-list 6 少阴))
+    ("乾" . ,(make-list 6 '少阳))
+    ("坤" . ,(make-list 6 '少阴))
     ("艮" . (阴爻 阴爻 阳爻 阴爻 阴爻 阳爻))
     ("兑" . (阳爻 阳爻 阴爻 阳爻 阳爻 阴爻))
     ("坎" . (阴爻 阳爻 阴爻 阴爻 阳爻 阴爻))
@@ -96,24 +95,24 @@
 
 (defvar 四相 '((1 . 少阳) (2 . 少阴)(3 . 老阳) (0 . 老阴)))
 
-(defvar 挂)
+(defvar 卦)
 
-(defun 装挂 ()
-  (setq 挂 nil)
+(defun 装卦 ()
+  (setq 卦 nil)
   (dolist (n 六个爻)
-    (setq 挂 (cons (cons n (cdr (assoc (random 4) 四相)))
-		   挂))))
+    (setq 卦 (cons (cons n (cdr (assoc (random 4) 四相)))
+		   卦))))
 
-(defun 新buffer显示挂 ()
+(defun 新buffer显示卦 ()
   (with-current-buffer
-      (switch-to-buffer "新挂")
-    (dolist (每爻 挂)
+      (switch-to-buffer "新卦")
+    (dolist (每爻 卦)
       (insert (concat (symbol-value (cdr 每爻)))
 	      "\n"))))
 
-(defun 起挂 ()
+(defun 起卦 ()
   (interactive)
 
-  (装挂)
+  (装卦)
 
-  (新buffer显示挂))
+  (新buffer显示卦))
