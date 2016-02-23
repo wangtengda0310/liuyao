@@ -63,6 +63,20 @@
     ("巽" . (阴爻 阳爻 阳爻 阴爻 阳爻 阳爻))
     ))
 
+(defun merge-alists (a1 a2)
+   (let ((ret '())
+	 (ac (copy-alist a1)))
+      (dolist (x a2)
+	(add-to-list 'ret (cons (pop ac) x)))
+      (reverse ret)))
+
+(defun 数卦爻 (要装的卦)
+  (let ((ret '()))
+    (dolist (每一卦 要装的卦)
+      (add-to-list 'ret (merge-alists 六个爻 (cdr 每一卦))))
+    (add-to-list 'ret '(1 23))
+    ret))
+
 (defvar 八卦对应五行
   '(
     ("乾" . "金")
