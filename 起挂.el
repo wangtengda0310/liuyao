@@ -1,6 +1,10 @@
 (defun 更新 (l key val)
-  (setq l (cons (cons key val)
-                (delq (assoc key l) l))))
+  (cons (cons key val)
+	(remove (assoc key l) l)))
+(defmacro 用函数更新 (l key func)
+  `(let ((ne (assoc ,key ,l)))
+     (cons (,func ne ) (remove ne ,l))))
+
 (defvar 六个爻 '("初爻" "二爻" "三爻" "四爻" "五爻" "上爻"))
 
 (defvar 老阳 "老阳 ———  ->  —  —")
@@ -175,10 +179,57 @@
 	      (nth 6 卦象)))
      '(("上爻" . 世) ("三爻" . 应))))))
 
+(defun 爻是阴还是阳 (爻)
+  (cond	((and (stringp 爻) (string= 爻 "阴爻")) 爻)
+	((and (stringp 爻) (string= 爻 "阳爻")) 爻)
+	((or (equal 爻 老阴) (equal 爻 少阴)) "阴爻")
+	((or (equal 爻 老阳) (equal 爻 少阳)) "阳爻")
+	((and (symbolp 爻) (string= (symbol-name 爻) "老阴")) "阴爻")
+	((and (symbolp 爻) (string= (symbol-name 爻) "少阴")) "阴爻")
+	((and (symbolp 爻) (string= (symbol-name 爻) "老阳")) "阳爻")
+	((and (symbolp 爻) (string= (symbol-name 爻) "少阳")) "阳爻")))
+
+(defun 内卦 (卦象)
+  (list (cons "初爻" (cdr (assoc "初爻" 卦象)))
+	(cons "二爻" (cdr (assoc "二爻" 卦象)))
+	(cons "三爻" (cdr (assoc "三爻" 卦象)))))
+
+(defun 外卦 (卦象)
+  (list (cons "初爻" (cdr (assoc "四爻" 卦象)))
+	(cons "二爻" (cdr (assoc "五爻" 卦象)))
+	(cons "三爻" (cdr (assoc "上爻" 卦象)))))
+
+(defun 变爻 (爻)
+  (cond ((equal "阴爻" (爻是阴还是阳 (cdr 爻))) "阳爻")
+	((equal "阳爻" (爻是阴还是阳 (cdr 爻))) "阴爻")
+	(t "error")))
+
+(defun 找本宫卦 (卦象)
+  (setq ret "none")
+  (dolist (卦爻 '(nil
+		  ("初爻")
+		  ("二爻")
+		  ("三爻")
+		  ("四爻")
+		  ("五爻")
+		  ("四爻")
+		  ("三爻" "二爻" "初爻")))
+    (dolist (e 卦爻)
+      (setq 卦象 (用函数更新 卦象 e
+			     (lambda (element)
+			       (cons (car element) (变爻 element))))))
+    (if (equal (内卦 卦象) (外卦 卦象))
+	(setq ret 卦象)
+      ))
+  ret)
+
+(defun 简单 (卦象) (mapcar (lambda (爻位) (cons (car 爻位) (爻是阴还是阳 (symbol-value (cdr 爻位))))) 卦象))
+
 (defun 起卦 ()
   (interactive)
 
   (装卦)
   (定世应 卦)
+  (找本宫卦 (简单 卦))
 
   (新buffer显示卦))
