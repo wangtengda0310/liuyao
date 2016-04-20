@@ -225,6 +225,10 @@
 
 (defun 简单 (卦象) (mapcar (lambda (爻位) (cons (car 爻位) (爻是阴还是阳 (symbol-value (cdr 爻位))))) 卦象))
 
+(defvar 长生十二宫 '(长生 沐浴 冠带 临官 帝旺 衰 病 死 墓 绝 胎 养))
+(defvar 地支循环 '())
+(defun 三合局 (地支) '((长生) (帝旺) (墓)))
+
 (defun 起卦 ()
   (interactive)
 
