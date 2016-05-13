@@ -113,17 +113,19 @@
 
 (defvar 四相 '((1 . 少阳) (2 . 少阴)(3 . 老阳) (0 . 老阴)))
 
-(defvar 卦)
 
 (defun 装卦 ()
-  (setq 卦 nil)
-  (dolist (n 六个爻)
-    (setq 卦 (cons (cons n (cdr (assoc (random 4) 四相)))
-		   卦))))
+  (let ((卦 nil))
+    (dolist (n 六个爻)
+      (setq 卦 (cons (cons n (cdr (assoc (random 4) 四相)))
+		     卦)))
+    卦))
 
-(defun 新buffer显示卦 ()
+(defun 新buffer显示卦 (卦)
   (with-current-buffer
-      (switch-to-buffer "新卦")
+      (switch-to-buffer (concat "新卦" (int-to-string (random))))
+    (set-background-color "gray")
+    (insert (calendar-chinese-date-string (calendar-current-date)) "\n")
     (dolist (每爻 卦)
       (insert (concat (symbol-value (cdr 每爻)))
 	      "\n"))))
@@ -232,8 +234,8 @@
 (defun 起卦 ()
   (interactive)
 
-  (装卦)
-  (定世应 卦)
-  (找本宫卦 (简单 卦))
+  (let ((卦 (装卦)))
+    (定世应 卦)
+    (找本宫卦 (简单 卦))
 
-  (新buffer显示卦))
+    (新buffer显示卦 卦)))
