@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="http://code.createjs.com/easeljs-0.8.2.min.js"></script>
+	</head>
+
+	<body style="background-color:#555;">
+		<canvas style="border:solid 1px" id="demoCanvas" width="500" height="800">asdf</canvas>
+	</body>
+	<script src="lunar.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		console.error("拖拽日月，并且同步改动时间环")
+		console.error("生克关系")
+		console.error("伏爻")
+		console.error("旬空")
+	</script>
+	<script type="text/javascript">
+		var 地支 = {
+			"子": {
+				"index": 0,
+				"text": new createjs.Text("子", "20px Arial", "black"),
+				"五行": "水"
+			},
+			"丑": {
+				"index": 1,
+				"text": new createjs.Text("丑", "20px Arial", "#ff7700"),
+				"五行": "土"
+			},
+			"寅": {
+				"index": 2,
+				"text": new createjs.Text("寅", "20px Arial", "green"),
+				"五行": "木"
+			},
+			"卯": {
+				"index": 3,
+				"text": new createjs.Text("卯", "20px Arial", "green"),
+				"五行": "木"
+			},
+			"辰": {
+				"index": 4,
+				"text": new createjs.Text("辰", "20px Arial", "#ff7700"),
+				"五行": "土"
+			},
+			"巳": {
+				"index": 5,
+				"text": new createjs.Text("巳", "20px Arial", "red"),
+				"五行": "火"
+			},
+			"午": {
+				"index": 6,
+				"text": new createjs.Text("午", "20px Arial", "red"),
+				"五行": "火"
+			},
+			"未": {
+				"index": 7,
+				"text": new createjs.Text("未", "20px Arial", "#ff7700"),
+				"五行": "土"
+			},
+			"申": {
+				"index": 8,
+				"text": new createjs.Text("申", "20px Arial", "#eee"),
+				"五行": "金"
+			},
+			"酉": {
+				"index": 9,
+				"text": new createjs.Text("酉", "20px Arial", "#eee"),
+				"五行": "金"
+			},
+			"戌": {
+				"index": 10,
+				"text": new createjs.Text("戌", "20px Arial", "#ff7700"),
+				"五行": "土"
+			},
+			"亥": {
+				"index": 11,
+				"text": new createjs.Text("亥", "20px Arial", "black"),
+				"五行": "水"
+			}
+		};
+		var 六亲 = {
+			"木": {
+				"木": "兄弟",
+				"火": "父母",
+				"土": "官鬼",
+				"金": "妻财",
+				"水": "子孙"
+			},
+			"火": {
+				"木": "子孙",
+				"火": "兄弟",
+				"土": "父母",
+				"金": "官鬼",
+				"水": "妻财"
+			},
+			"土": {
+				"木": "妻财",
+				"火": "子孙",
+				"土": "兄弟",
+				"金": "父母",
+				"水": "官鬼"
+			},
+			"金": {
+				"木": "官鬼",
+				"火": "妻财",
+				"土": "子孙",
+				"金": "兄弟",
+				"水": "父母"
+			},
+			"水": {
+				"木": "父母",
+				"火": "官鬼",
+				"土": "妻财",
+				"金": "子孙",
+				"水": "兄弟"
+			}
+		}
+		var 八卦五行 = {
+			"乾": "金",
+			"坤": "土",
+			"震": "木",
+			"巺": "木",
+			"坎": "水",
+			"离": "火",
+			"艮": "土",
+			"兑": "金"
+		};
+		var 六爻五行 = {
+			"乾": ["甲子", "甲寅", "甲辰", "壬午", "壬申", "壬戌"],
+			"坤": ["乙未", "乙巳", "乙卯", "癸丑", "癸亥", "癸酉"],
+			"震": ["庚子", "庚寅", "庚辰", "庚午", "庚申", "庚戌"],
+			"巺": ["辛丑", "辛亥", "辛酉", "辛未", "辛巳", "辛卯"],
+			"坎": ["戊寅", "戊辰", "戊午", "戊申", "戊戌", "戊子"],
+			"离": ["己卯", "己丑", "己亥", "己酉", "己未", "己巳"],
+			"艮": ["丙辰", "丙午", "丙申", "丙戌", "丙子", "丙寅"],
+			"兑": ["丁巳", "丁卯", "丁丑", "丁亥", "丁酉", "丁未"]
+		};
+	</script>
+	<script type="text/javascript">
+		var stage = new createjs.Stage("demoCanvas");
+		createjs.Ticker.addEventListener("tick", function(event) {
+			if(event.time < 6000) {
+				摇卦(event.time);
+			}
+			stage.update();
+		});
+		var q = f(new Date());
+		var m = new createjs.Text(q.gzMonth + "月" + q.gzDate + "日", "20px Arial", "black");
+		m.y = 70;
+		var d = new createjs.Text("(不准)", "20px Arial", "black");
+		d.y = 100;
+		stage.addChild(m);
+		stage.addChild(d);
+		var 卦 = [];
+		var shape地支 = new createjs.Shape();
+
+		var 铜钱1 = new createjs.Text("正", "20px Arial", "black");
+		铜钱1.x = 50;
+		var 铜钱2 = new createjs.Text("正", "20px Arial", "black");
+		铜钱2.x = 100;
+		var 铜钱3 = new createjs.Text("正", "20px Arial", "black");
+		铜钱3.x = 150;
+		stage.addChild(铜钱1);
+		stage.addChild(铜钱2);
+		stage.addChild(铜钱3);
+
+		var count = 0;
+		var 六爻 = [{
+			"名字": "初爻"
+		}, {
+			"名字": "二爻"
+		}, {
+			"名字": "三爻"
+		}, {
+			"名字": "四爻"
+		}, {
+			"名字": "五爻"
+		}, {
+			"名字": "上爻"
+		}];
+
+		function debug(s) {
+			debugText.text += "\n" + s;
+		}
+		var debugText = new createjs.Text(""); {
+			var gDebug = new createjs.Container();
+			gDebug.addChild(debugText);
+			stage.addChild(gDebug);
+		}
+		var g卦 = new createjs.Container();
+		var g地支 = new createjs.Container();
+		g卦.x = 100;
+		g卦.y = 200;
+		g地支.x = 200;
+		g地支.y = 600;
+		stage.addChild(g卦);
+		stage.addChild(g地支);
+
+		function 摇卦(time) {
+			if(count >= 6) return;
+			var i = Math.ceil(time / 100);
+			if(count != i) {
+				count = i;
+				var ran = Math.floor(Math.random() * 4);
+
+				var 爻 = ["老阴", "少阳", "少阴", "老阳"][ran];
+				六爻[i - 1]["爻"] = 爻;
+				卦.push(爻.slice(1));
+
+				var yao;
+				if(爻 == "少阳" || 爻 == "老阳") {
+					var shape = new createjs.Shape();
+					shape.graphics.beginFill("DeepSkyBlue").drawRect(0, 15 * -count, 50, 10);
+					if(爻 == "老阳") {
+						shape.graphics.beginFill("DeepSkyBlue").drawRect(100, 15 * -count, 20, 10);
+						shape.graphics.beginFill("DeepSkyBlue").drawRect(130, 15 * -count, 20, 10);
+					}
+					g卦.addChild(shape);
+
+				} else if(爻 == "少阴" || 爻 == "老阴") {
+					var shape = new createjs.Shape();
+					shape.graphics.beginFill("DeepSkyBlue").drawRect(0, 15 * -count, 20, 10);
+					shape.graphics.beginFill("DeepSkyBlue").drawRect(30, 15 * -count, 20, 10);
+					if(爻 == "老阴") {
+						shape.graphics.beginFill("DeepSkyBlue").drawRect(100, 15 * -count, 50, 10);
+					}
+					g卦.addChild(shape);
+				} else {
+					debug(爻 + ":铜钱错误");
+					return;
+				}
+				stage.update()
+
+				if(count == 6) {
+					{
+						var 世应 = 定世应(卦);
+						var 本宫卦 = 世应["本宫卦"];
+						var text1 = new createjs.Text(本宫卦 + 八卦五行[本宫卦], "20px Arial", "#ff7700");
+						text1.x = 100;
+						g卦.addChild(text1);
+					} {
+						var text1 = new createjs.Text(本宫卦 + 八卦五行[本宫卦], "20px Arial", "#ff7700");
+						text1.regX = 20;
+						text1.regY = 10;
+						g地支.addChild(text1);
+					}
+					var text2 = new createjs.Text(世应["世爻位"], "20px Arial", "#ff7700");
+					text2.x = 150;
+					g卦.addChild(text2);
+					for(i in 世应["纳甲"]) {
+						六爻[i]["纳甲"] = 世应["纳甲"][i];
+					}
+					var text3 = new createjs.Text(世应["纳甲"], "20px Arial", "#ff7700");
+					text3.x = -100;
+					text3.y = 30;
+					g卦.addChild(text3);
+					六爻画到地支圆圈上(世应);
+					日月画到地支圆圈上();
+					画时间环();
+				}
+			}
+
+			铜钱1.text = Math.round(Math.random()) ? "正" : "反";
+			铜钱2.text = Math.round(Math.random()) ? "正" : "反";
+			铜钱3.text = Math.round(Math.random()) ? "正" : "反";
+
+		}
+
+function 画时间环() {
+	console.error(1);
+}
+		function 日月画到地支圆圈上() {
+			var 月建 = 地支[q.gzMonth.slice(1)];
+			var 日辰 = 地支[q.gzDate.slice(1)];
+			{
+				var text月建 = new createjs.Text("月建", "10px Arial", "black");
+				text月建.x = 60 * 月建.position[0];
+				text月建.y = 60 * 月建.position[1];
+				text月建.regX = 10;
+				text月建.regY = 5;
+				g地支.addChild(text月建);
+			}
+			{
+				var text日辰 = new createjs.Text("日辰", "10px Arial", "black");
+				text日辰.x = 60 * 日辰.position[0];
+				text日辰.y = 60 * 日辰.position[1];
+				text日辰.regX = 10;
+				text日辰.regY = 5;
+				g地支.addChild(text日辰);
+			}
+		}
+
+		function 六爻画到地支圆圈上(世应) {
+			var 本宫卦五行 = 八卦五行[世应["本宫卦"]];
+			var s = 世应.世爻位;
+
+			for(i in 六爻) {
+				var 爻 = 六爻[i];
+				var 支 = 地支[爻.纳甲.slice(1)];
+				var 圆半径 = 130;
+				var position = 支["position"];
+				if(支.t爻位) {
+					支.t爻位.text += 爻.名字;
+					var x = text.text.length / 2;
+				} else {
+					支.t爻位 = new createjs.Text(爻.名字, "10px Arial", "black");
+					var text = 支.t爻位;
+					var x = text.text.length / 2;
+					text.regX = 10 * x;
+					text.regY = 5;
+					text.x = 圆半径 * position[0];
+					text.y = 圆半径 * position[1];
+					g地支.addChild(text);
+
+				}
+				if(s == 爻.名字) {
+					支.t爻位.text += "(世爻)";
+					var x = text.text.length / 2;
+				}
+				var 爻六亲 = 六亲[支["五行"]][本宫卦五行];
+				var tex六亲 = new createjs.Text(爻六亲, "10px Arial", "black");
+				tex六亲.regX = 10;
+				tex六亲.regY = 5;
+				tex六亲.x = 圆半径 * 1.3 * position[0];
+				tex六亲.y = 圆半径 * 1.3 * position[1];
+				g地支.addChild(tex六亲);
+			}
+		}
+
+		function 定世应() {
+			var args = [];
+			var args1 = [];
+			for(i in 六爻) {
+				args[i] = 六爻[i]["爻"].slice(1);
+				args1[i] = 六爻[i]["爻"].slice(1);
+			}
+
+			function 相同(args) {
+				return args[0] == args[3] && args[1] == args[4] && args[2] == args[5];
+			}
+
+			function 变爻(爻) {
+				if(爻 == "阳") return "阴";
+				else if(爻 == "阴") return "阳";
+				else {
+					debug("变爻错误");
+				}
+			}
+			var s = {
+				"阳,阳,阳": "乾",
+				"阳,阳,阴": "兑",
+				"阳,阴,阳": "离",
+				"阳,阴,阴": "震",
+				"阴,阳,阳": "巺",
+				"阴,阳,阴": "坎",
+				"阴,阴,阳": "艮",
+				"阴,阴,阴": "坤"
+			}
+			var index = [
+				[
+					[],
+					["上爻"]
+				],
+				[
+					[0],
+					["初爻"]
+				],
+				[
+					[1],
+					["二爻"]
+				],
+				[
+					[2],
+					["三爻"]
+				],
+				[
+					[3],
+					["四爻"]
+				],
+				[
+					[4],
+					["五爻"]
+				],
+				[
+					[3],
+					["四爻"]
+				],
+				[
+					[0, 1, 2],
+					["三爻"]
+				]
+			];
+
+			for(i in index) {
+				var 爻位 = index[i][0];
+				var 世爻位置 = index[i][1];
+				for(idx in 爻位) {
+					args[爻位[idx]] = 变爻(args[爻位[idx]]);
+				}
+				//分隔线
+				if(相同(args)) {
+					var 外卦 = s[args1.slice(3)];
+					var 内卦 = s[args1.slice(0, 3)];
+
+					return {
+						本宫卦: s[args.slice(3)],
+						世爻位: 世爻位置,
+						纳甲: 六爻五行[内卦].slice(0, 3).concat(六爻五行[外卦].slice(3))
+					};
+				}
+			}
+			debug("世应错误");
+		}
+	</script>
+
+	<script type="text/javascript">
+		var 画地支 = function() {
+			var 圆半径 = 80;
+			//			shape地支.graphics.beginStroke("DeepSkyBlue").drawCircle(0, 0, 100);
+			//			shape地支.graphics.beginStroke("DeepSkyBlue").drawCircle(0, 0, 150);
+			//			shape地支.graphics.beginStroke("DeepSkyBlue").drawCircle(0, 0, 200);
+			//			rect.graphics.beginFill("gray").drawRect(0, 0, -圆半径 - 10, -圆半径 - 10);
+			//			rect.graphics.beginFill("gray").drawRect(0, 0, 圆半径 + 10, 圆半径 + 10);
+			g地支.addChild(shape地支);
+
+			for(idx in 地支) {
+				var i = 地支[idx].index;
+				地支[idx].position = [Math.cos(Math.PI * (Number(i) + 3.5) / 6), Math.sin(Math.PI * (Number(i) + 3.5) / 6)];
+				var text = 地支[idx].text;
+
+				text.regX = 10;
+				text.regY = 10;
+				text.x = 圆半径 * 地支[idx].position[0];
+				text.y = 圆半径 * 地支[idx].position[1];
+				g地支.addChild(text);
+
+				{
+					var ang = Math.PI * (Number(i) + 3) / 6;
+					shape地支.graphics.beginStroke("DeepSkyBlue").arc(0, 0, 100, ang, ang + Math.PI / 6)
+					shape地支.graphics.beginStroke("DeepSkyBlue").arc(0, 0, 150, ang, ang + Math.PI / 6)
+					shape地支.graphics.beginStroke("DeepSkyBlue").arc(0, 0, 200, ang, ang + Math.PI / 6)
+					var x = 100 * Math.cos(ang);
+					var y = 100 * Math.sin(ang);
+					shape地支.graphics.beginStroke("white")
+						.moveTo(x, y)
+						.lineTo(2 * x, 2 * y);
+				}
+			}
+		}
+
+		画地支();
+	</script>
+
+</html>
