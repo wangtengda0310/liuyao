@@ -1,3 +1,5 @@
+(require 'calendar)
+
 (defun 更新 (l key val)
   (cons (cons key val)
 	(remove (assoc key l) l)))
@@ -228,11 +230,12 @@
 (defun 简单 (卦象) (mapcar (lambda (爻位) (cons (car 爻位) (爻是阴还是阳 (symbol-value (cdr 爻位))))) 卦象))
 
 (defvar 长生十二宫 '(长生 沐浴 冠带 临官 帝旺 衰 病 死 墓 绝 胎 养))
+
 (defvar 木长生十二宫 '(亥 子 丑 寅 卯 辰 巳 午 未 申 酉 戌))
 (defvar 火长生十二宫 '(寅 卯 辰 巳 午 未 申 酉 戌 亥 子 丑))
 (defvar 金长生十二宫 '(巳 午 未 申 酉 戌 亥 子 丑 寅 卯 辰))
 (defvar 水长生十二宫 '(申 酉 戌 亥 子 丑 寅 卯 辰 巳 午 未))
-(defvar 地支循环 '())
+(defvar 地支循环 '#1=(子 丑 寅 卯 辰 巳 午 未 申 酉 戌 亥 #1#))
 (defun 三合局 (地支) '((长生) (帝旺) (墓)))
 
 (defun 起卦 ()
