@@ -15,7 +15,6 @@
 		console.error("拖拽日月，并且同步改动时间环")
 		console.error("生克关系")
 		console.error("伏爻")
-		console.error("旬空")
 	</script>
 	<script type="text/javascript">
 		var 地支 = {
@@ -137,6 +136,7 @@
 			"艮": ["丙辰", "丙午", "丙申", "丙戌", "丙子", "丙寅"],
 			"兑": ["丁巳", "丁卯", "丁丑", "丁亥", "丁酉", "丁未"]
 		};
+		var 天干 = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
 	</script>
 	<script type="text/javascript">
 		var stage = new createjs.Stage("demoCanvas");
@@ -148,6 +148,15 @@
 		});
 		var q = f(new Date());
 		var m = new createjs.Text(q.gzMonth + "月" + q.gzDate + "日", "20px Arial", "black");
+		var 旬空 = (
+		function(干支) {
+			var 干 = 干支.slice(0,1);
+			var 支 = 干支.slice(1);
+			var a = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+			var i = 天干.indexOf(干);
+			var j = a.indexOf(支);
+			return [a[(10-i+j)%12],a[(10-i+j+1)%12]];
+		})(q.gzDate);
 		m.y = 70;
 		var d = new createjs.Text("(不准)", "20px Arial", "black");
 		d.y = 100;
@@ -234,14 +243,16 @@
 				stage.update()
 
 				if(count == 6) {
+					var 世应 = 定世应(卦);
+					var 本宫卦 = 世应["本宫卦"];
 					{
-						var 世应 = 定世应(卦);
-						var 本宫卦 = 世应["本宫卦"];
 						var text1 = new createjs.Text(本宫卦 + 八卦五行[本宫卦], "20px Arial", "#ff7700");
-						text1.x = 100;
+						text1.x = 10;
 						g卦.addChild(text1);
-					} {
-						var text1 = new createjs.Text(本宫卦 + 八卦五行[本宫卦], "20px Arial", "#ff7700");
+					}
+					{
+						var color = {"木":"green","火":"red","土":"#ff7700","金":"white","水":"black"}[八卦五行[本宫卦]];
+						var text1 = new createjs.Text(本宫卦 + 八卦五行[本宫卦], "20px Arial", color);
 						text1.regX = 20;
 						text1.regY = 10;
 						g地支.addChild(text1);
@@ -269,12 +280,11 @@
 		}
 
 function 画时间环() {
-	console.error(1);
+	console.error("画时间环");
 }
 		function 日月画到地支圆圈上() {
-			var 月建 = 地支[q.gzMonth.slice(1)];
-			var 日辰 = 地支[q.gzDate.slice(1)];
 			{
+				var 月建 = 地支[q.gzMonth.slice(1)];
 				var text月建 = new createjs.Text("月建", "10px Arial", "black");
 				text月建.x = 60 * 月建.position[0];
 				text月建.y = 60 * 月建.position[1];
@@ -283,6 +293,7 @@ function 画时间环() {
 				g地支.addChild(text月建);
 			}
 			{
+				var 日辰 = 地支[q.gzDate.slice(1)];
 				var text日辰 = new createjs.Text("日辰", "10px Arial", "black");
 				text日辰.x = 60 * 日辰.position[0];
 				text日辰.y = 60 * 日辰.position[1];
@@ -418,11 +429,6 @@ function 画时间环() {
 	<script type="text/javascript">
 		var 画地支 = function() {
 			var 圆半径 = 80;
-			//			shape地支.graphics.beginStroke("DeepSkyBlue").drawCircle(0, 0, 100);
-			//			shape地支.graphics.beginStroke("DeepSkyBlue").drawCircle(0, 0, 150);
-			//			shape地支.graphics.beginStroke("DeepSkyBlue").drawCircle(0, 0, 200);
-			//			rect.graphics.beginFill("gray").drawRect(0, 0, -圆半径 - 10, -圆半径 - 10);
-			//			rect.graphics.beginFill("gray").drawRect(0, 0, 圆半径 + 10, 圆半径 + 10);
 			g地支.addChild(shape地支);
 
 			for(idx in 地支) {
@@ -446,6 +452,12 @@ function 画时间环() {
 					shape地支.graphics.beginStroke("white")
 						.moveTo(x, y)
 						.lineTo(2 * x, 2 * y);
+				}
+			}
+			{
+				for(index in 旬空) {
+					var 旬空地支 = 地支[旬空[index]];
+					旬空地支.text.text="旬空";
 				}
 			}
 		}
