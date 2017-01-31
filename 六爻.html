@@ -146,8 +146,8 @@
 			}
 			stage.update();
 		});
-		var q = f(new Date());
-		var m = new createjs.Text(q.gzMonth + "月" + q.gzDate + "日", "20px Arial", "black");
+		var date = new Date();
+		var qd = f(date);
 		var 旬空 = (
 		function(干支) {
 			var 干 = 干支.slice(0,1);
@@ -156,12 +156,15 @@
 			var i = 天干.indexOf(干);
 			var j = a.indexOf(支);
 			return [a[(10-i+j)%12],a[(10-i+j+1)%12]];
-		})(q.gzDate);
-		m.y = 70;
-		var d = new createjs.Text("(不准)", "20px Arial", "black");
-		d.y = 100;
-		stage.addChild(m);
-		stage.addChild(d);
+		})(qd.gzDate);
+		{
+		var mon = new createjs.Text(qd.gzMonth + "月" + qd.gzDate + "日", "20px Arial", "black");
+		mon.y = 70;
+		var dd = new createjs.Text("(不准)", "20px Arial", "black");
+		dd.y = 100;
+		stage.addChild(mon);
+		stage.addChild(dd);
+		}
 		var 卦 = [];
 		var shape地支 = new createjs.Shape();
 
@@ -202,8 +205,8 @@
 		var g地支 = new createjs.Container();
 		g卦.x = 100;
 		g卦.y = 200;
-		g地支.x = 200;
-		g地支.y = 600;
+		g地支.x = 250;
+		g地支.y = 500;
 		stage.addChild(g卦);
 		stage.addChild(g地支);
 
@@ -280,11 +283,21 @@
 		}
 
 function 画时间环() {
-	console.error("画时间环");
+	for(i=-11;i<12;i++) {
+	    var dtNew=new Date(date.getTime()+i*24*60*60*1000);
+	    var qq = f(dtNew);
+	    var 支 = 地支[qq.gzDate.slice(1)];
+	    var position = 支.position;
+	    var text = new createjs.Text(dtNew.getDate(), "10px Arial", "black");
+	    var r = i<0?220:i>0?240:230;
+	    text.x = position[0]*r;
+	    text.y = position[1]*r;
+	    g地支.addChild(text);
+	}
 }
 		function 日月画到地支圆圈上() {
 			{
-				var 月建 = 地支[q.gzMonth.slice(1)];
+				var 月建 = 地支[qd.gzMonth.slice(1)];
 				var text月建 = new createjs.Text("月建", "10px Arial", "black");
 				text月建.x = 60 * 月建.position[0];
 				text月建.y = 60 * 月建.position[1];
@@ -293,7 +306,7 @@ function 画时间环() {
 				g地支.addChild(text月建);
 			}
 			{
-				var 日辰 = 地支[q.gzDate.slice(1)];
+				var 日辰 = 地支[qd.gzDate.slice(1)];
 				var text日辰 = new createjs.Text("日辰", "10px Arial", "black");
 				text日辰.x = 60 * 日辰.position[0];
 				text日辰.y = 60 * 日辰.position[1];
