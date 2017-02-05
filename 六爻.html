@@ -265,22 +265,37 @@
 		}
 	function 画变爻() {
 	    function 画箭头(x1,y1,x2,y2){
-	      var r = 0.8;
-	      var x = x1+r*(x2-x1);
-	      var y = y1+r*(y2-y1);
-	      shape地支.graphics.beginStroke("white")
-	      .moveTo(x1,y1)
-	      .lineTo(x,y);
-	      var k = (y2-y1)/(x2-x1);
-	      var _k =  -1/k;
-	      var b = y-_k*x;
-	      shape地支.graphics.drawCircle(x,y,8);
-	      var text = new createjs.Text("变", "10px Arial", "#ff7700");
-	      text.x=x;
-	      text.y=y;
-	      text.regX=5;
-	      text.regY=5;
-	      g地支.addChild(text);
+	    	var l = 50;
+	      if((x1==x2)&&(y1==y2)){
+	    	x1 *= l;y1*=l;x2*=l-10;y2*=l-10;
+	      }else{
+	    	x1 *= l;y1*=l;x2*=l;y2*=l;
+	      }
+	      var r = 0.75;
+	      var cx1,cy1,cx2,cy2;
+	      cx1 = x1+(1-r)/2*(x2-x1);
+	      cy1 = y1+(1-r)/2*(y2-y1);
+	      cx2 = x2-(1-r)/2*(x2-x1);
+	      cy2 = y2-(1-r)/2*(y2-y1);
+	      var x = x1+(1-r/2)*(x2-x1);
+	      var y = y1+(1-r/2)*(y2-y1);
+	      shape地支.graphics.beginStroke("white").moveTo(cx1,cy1).lineTo(cx2,cy2);
+	      {
+	      var text动 = new createjs.Text("动", "10px Arial", "#ff7700");
+	      text动.x=(x1+cx1)/2;
+	      text动.y=(y1+cy1)/2;
+	      text动.regX=5;
+	      text动.regY=5;
+	      g地支.addChild(text动);
+	      }
+	      {
+	      var text变 = new createjs.Text("变", "10px Arial", "#ff7700");
+	      text变.x=(cx2+x2)/2;
+	      text变.y=(cy2+y2)/2;
+	      text变.regX=5;
+	      text变.regY=5;
+	      g地支.addChild(text变);
+	      }
 	    }
 	  for(i in 六爻) {
 	    var 爻 = 六爻[i];
@@ -290,7 +305,7 @@
 	    var 动爻地支 = 地支[爻["纳甲"].slice(1)];
 	    var 变爻地支 = 地支[变卦纳甲[i].slice(1)];
 	    
-	    画箭头(60*动爻地支["position"][0],60*动爻地支["position"][1],60*变爻地支["position"][0],60*变爻地支["position"][1]);
+	    画箭头(动爻地支["position"][0],动爻地支["position"][1],变爻地支["position"][0],变爻地支["position"][1]);
 	    }
 	  }
 	}
