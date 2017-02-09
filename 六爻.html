@@ -476,13 +476,14 @@ for(i in 纳甲) {
 }
 					{
 						本宫卦 = s[args.slice(3)];
-						var text1 = new createjs.Text(本宫卦 + 八卦五行[本宫卦], "20px Arial", "#ff7700");
+						本宫卦五行 = 八卦五行[本宫卦];
+						
+						var text1 = new createjs.Text(本宫卦 + 本宫卦五行, "20px Arial", "#ff7700");
 						text1.x = 10;
 						g卦.addChild(text1);
-					}
-					{
-						var color = {"木":"green","火":"red","土":"#ff7700","金":"white","水":"black"}[八卦五行[本宫卦]];
-						var text1 = new createjs.Text(本宫卦 + 八卦五行[本宫卦], "20px Arial", color);
+						
+						var color = {"木":"green","火":"red","土":"#ff7700","金":"white","水":"black"}[本宫卦五行];
+						var text1 = new createjs.Text(本宫卦 + 本宫卦五行, "20px Arial", color);
 						text1.regX = 20;
 						text1.regY = 10;
 						g地支.addChild(text1);
