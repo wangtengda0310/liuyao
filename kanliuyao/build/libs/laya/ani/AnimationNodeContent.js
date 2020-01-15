@@ -1,0 +1,5 @@
+/**
+ * @internal
+ */
+export class AnimationNodeContent {
+}
