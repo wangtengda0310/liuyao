@@ -34,7 +34,6 @@ export default class GameUI extends ui.test.TestSceneUI {
 
     onclick(e: Event): void {
         let 六爻 = this.六爻;
-        
         if(!六爻.卦已经成了()) {
             六爻.起卦();
             if(六爻.卦已经成了()) {
