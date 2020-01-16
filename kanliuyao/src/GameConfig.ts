@@ -3,9 +3,9 @@ import GameUI from "./script/GameUI"
 import GameControl from "./script/GameControl"
 import Bullet from "./script/Bullet"
 import DropBox from "./script/DropBox"
-import { BoxCollider } from "laya/physics/BoxCollider"
-import { RigidBody } from "laya/physics/RigidBody"
 import { CircleCollider } from "laya/physics/CircleCollider"
+import { RigidBody } from "laya/physics/RigidBody"
+import { BoxCollider } from "laya/physics/BoxCollider"
 import { Text } from "laya/display/Text"
 import { ClassUtils } from "laya/utils/ClassUtils";
 import { ui } from "./ui/layaMaxUI";
@@ -33,9 +33,9 @@ export default class GameConfig{
         reg("script/GameControl.ts",GameControl);
         reg("script/Bullet.ts",Bullet);
         reg("script/DropBox.ts",DropBox);
-        reg("laya.physics.BoxCollider",BoxCollider);
-        reg("laya.physics.RigidBody",RigidBody);
         reg("laya.physics.CircleCollider",CircleCollider);
+        reg("laya.physics.RigidBody",RigidBody);
+        reg("laya.physics.BoxCollider",BoxCollider);
         reg("laya.display.Text",Text);
     }
 }

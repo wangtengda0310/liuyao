@@ -52,7 +52,6 @@ export default class DropBox extends Script {
                     SoundManager.playSound("sound/destroy.wav");
                 }
             }
-            GameUI.instance.addScore(1);
         } else if (other.label === "ground") {
             //只要有一个盒子碰到地板，则停止游戏
             owner.removeSelf();
