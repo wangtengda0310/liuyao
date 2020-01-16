@@ -225,23 +225,30 @@ abstract class 爻 {
 abstract class 静爻 extends 爻 {
 }
 abstract class 动爻 extends 爻 {
-    abstract 变爻():爻;
+    变爻:爻;
+    constructor(爻位:number) {
+        super(爻位);
+        this.变爻 = new 变爻(this);
+    }
 }
-abstract class 变爻 extends 爻 {
-    abstract 动爻():爻;
+class 变爻 extends 爻 {
+    动爻:爻;
+    constructor(动爻:爻) {
+        super(动爻.爻位);
+        this.动爻 = 动爻;
+    }
+    阴阳():string{
+        return this.动爻.阴阳()=="阴"?"阳":"阴";
+    };
 }
 class 老阴 extends 动爻{
-    变爻(): 爻 {
-        throw new Error("Method not implemented.");
-    }
-    阴阳():string{return "阴";}};
+    阴阳():string{return "阴";}
+};
 class 少阳 extends 静爻{阴阳():string{return "阳";}};
 class 少阴 extends 静爻{阴阳():string{return "阴";}};
 class 老阳 extends 动爻{
-    变爻(): 爻 {
-        throw new Error("Method not implemented.");
-    }
-    阴阳():string{return "阳";}};
+    阴阳():string{return "阳";}
+};
 
 export interface renderer {
 

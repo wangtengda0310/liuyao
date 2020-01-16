@@ -201,13 +201,22 @@ class 爻 {
 class 静爻 extends 爻 {
 }
 class 动爻 extends 爻 {
+    constructor(爻位) {
+        super(爻位);
+        this.变爻 = new 变爻(this);
+    }
 }
 class 变爻 extends 爻 {
+    constructor(动爻) {
+        super(动爻.爻位);
+        this.动爻 = 动爻;
+    }
+    阴阳() {
+        return this.动爻.阴阳() == "阴" ? "阳" : "阴";
+    }
+    ;
 }
 class 老阴 extends 动爻 {
-    变爻() {
-        throw new Error("Method not implemented.");
-    }
     阴阳() { return "阴"; }
 }
 ;
@@ -220,9 +229,6 @@ class 少阴 extends 静爻 {
 }
 ;
 class 老阳 extends 动爻 {
-    变爻() {
-        throw new Error("Method not implemented.");
-    }
     阴阳() { return "阳"; }
 }
 ;
