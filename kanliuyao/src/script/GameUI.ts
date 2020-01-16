@@ -3,7 +3,7 @@ import GameControl from "./GameControl"
 import { MouseManager } from "laya/events/MouseManager";
 import { Event } from "laya/events/Event";
 
-import 六爻工具 from "./六爻";
+import {六爻工具, 卦象} from "./六爻";
 
 /**
  * 本示例采用非脚本的方式实现，而使用继承页面基类，实现页面逻辑。在IDE里面设置场景的Runtime属性即可和场景进行关联
@@ -16,7 +16,7 @@ export default class GameUI extends ui.test.TestSceneUI {
     /**游戏控制脚本引用，避免每次获取组件带来不必要的性能开销 */
     private _control: GameControl;
     private 六爻:六爻工具;
-    private 卦:any;
+    private 卦:卦象;
 
     constructor() {
         super();
@@ -29,7 +29,6 @@ export default class GameUI extends ui.test.TestSceneUI {
     onEnable(): void {
         this._control = this.getComponent(GameControl);
         //点击提示文字，开始游戏
-        alert(this);
         this.on(Event.CLICK, this, this.onclick);
     }
 
@@ -40,6 +39,7 @@ export default class GameUI extends ui.test.TestSceneUI {
             六爻.起卦();
             if(六爻.卦已经成了()) {
                 this.卦 = 六爻.卦象;
+                alert(this.卦.卦名)
                 this._control.startGame();
             }
         }

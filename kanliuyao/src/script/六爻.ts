@@ -1,7 +1,7 @@
 
-export default class 六爻 {
+export class 六爻工具 {
     private 爻位:爻[];
-    public 卦象:any;
+    public 卦象:卦象;
     constructor() {
         this.爻位 = [];
     }
@@ -12,11 +12,11 @@ export default class 六爻 {
         if (num==0) {
             爻 = new 老阴(this.爻位.length);
         } else if (num==1) {
-            爻 = new 老阴(this.爻位.length);
+            爻 = new 少阳(this.爻位.length);
         } else if (num==2) {
-            爻 = new 老阴(this.爻位.length);
+            爻 = new 少阴(this.爻位.length);
         } else if (num==3) {
-            爻 = new 老阴(this.爻位.length);
+            爻 = new 老阳(this.爻位.length);
         } else {
             throw new Error("摇够次数了");
         }
@@ -30,12 +30,13 @@ export default class 六爻 {
     }
 }
 
-class 卦象 {
+export class 卦象 {
     卦名:string;
     爻位:爻[];
     constructor(爻位:爻[]) {
         this.爻位 = 爻位;
-        this.卦名 = "需要补充";
+        console.log(this.爻位);
+        this.卦名 = this.根据数组判断卦名(this.爻位.slice(0,3)),this.根据数组判断卦名(this.爻位.slice(3,6));
     }
     private 根据数组判断卦名([第一爻,第二爻,第三爻]:爻[]):string {
         if(第一爻.阴阳()=="阳"&&第二爻.阴阳()=="阳"&&第三爻.阴阳()=="阳") {
@@ -72,7 +73,7 @@ class 卦象 {
     }
 }
 
-class 爻 {
+abstract class 爻 {
     爻位:number;
     constructor(爻位:number) {
         if(爻位<0||爻位>5) {
@@ -80,11 +81,13 @@ class 爻 {
         }
         this.爻位 = 爻位;
     }
-    阴阳():string{
-        return "";
-    }
+    abstract 阴阳():string;
 }
-class 老阴 extends 爻{};
-class 少阳 extends 爻{};
-class 少阴 extends 爻{};
-class 老阳 extends 爻{};
+class 老阴 extends 爻{阴阳():string{return "阴";}};
+class 少阳 extends 爻{阴阳():string{return "阳";}};
+class 少阴 extends 爻{阴阳():string{return "阴";}};
+class 老阳 extends 爻{阴阳():string{return "阳";}};
+
+export interface renderer {
+
+}
